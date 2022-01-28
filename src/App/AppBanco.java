@@ -3,10 +3,11 @@ import Agencia.*;
 
 import java.util.Scanner;
 
+@SuppressWarnings("EnhancedSwitchMigration")
 public class AppBanco {
 
     private static Agencia banco = new Agencia();
-    private static AppCLiente appCLiente = new AppCLiente();
+    private static AppCliente appCliente = new AppCliente();
     private static AppGerente appGerente = new AppGerente();
 
     public Agencia getBanco() {
@@ -17,12 +18,12 @@ public class AppBanco {
         this.banco = banco;
     }
 
-    public AppCLiente getAppCLiente() {
-        return appCLiente;
+    public AppCliente getAppCliente() {
+        return appCliente;
     }
 
-    public void setAppCLiente(AppCLiente appCLiente) {
-        this.appCLiente = appCLiente;
+    public void setAppCliente(AppCliente appCLiente) {
+        this.appCliente = appCLiente;
     }
 
     public AppGerente getAppGerente() {
@@ -48,10 +49,13 @@ public class AppBanco {
             switch (menu){
                 case 1:
                     appGerente.iniciarAppGerente();
+                    break;
                 case 2:
-                    System.out.println("teste");
+                    appCliente.iniciarAppCliente();
+                    break;
                 case 0:
                     menu = 0;
+                    break;
             }
         }while (menu != 0);
     }
