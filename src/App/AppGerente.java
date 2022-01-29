@@ -16,6 +16,8 @@ public class AppGerente {
 
         System.out.println("Aplicativo Gerente Iniciado");
 
+
+
         int ok = 0;
 
         do {
@@ -28,7 +30,31 @@ public class AppGerente {
         }while (ok == 0);
 
         menuGerente(login, senha);
+
     }
+
+    /**
+    public static void openDataBase(){
+        java.sql.Connection c = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
+            c.setAutoCommit(false);
+        }
+
+        catch (Exception e){
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    public void closeDataBase(){
+        try {
+
+        }
+    }
+     **/
 
     public int validarGerente(String login, String senha){
 
@@ -159,10 +185,35 @@ public class AppGerente {
     }
     public void cadastrarCliente(String nome, String cpf, String matricula, String login, String senha, String tipoConta){
 
-        cadastrarConta(senha, tipoConta);
+        String contaId = cadastrarConta(senha, tipoConta);
+
+        if (Integer.parseInt(contaId) > 0){
+            java.sql.Connection c = null;
+            Random random = new Random();
+            Statement stmt = null;
+            String max = "";
+
+            try {
+                Class.forName("org.postgresql.Driver");
+                c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
+                //c.setAutoCommit(false);
+
+                stmt = c.createStatement();
+                String query = ("insert into cliente \n" +
+                        "values ('" + nome +"', '" + cpf + "', '" + matricula + "', '" + login + "', '" + senha + "', '" + contaId + "')");
+                stmt.executeUpdate(query);
+
+                stmt.close();
+                c.close();
+
+            } catch ( Exception e ) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+        }
     }
 
-    public void cadastrarConta(String senha, String tipoConta){
+    public String cadastrarConta(String senha, String tipoConta){
         java.sql.Connection c = null;
         Random random = new Random();
         Statement stmt = null;
@@ -171,7 +222,7 @@ public class AppGerente {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
-            c.setAutoCommit(false);
+            //c.setAutoCommit(false);
 
             stmt = c.createStatement();
 
@@ -183,24 +234,25 @@ public class AppGerente {
             }
 
             if (tipoConta.equals("1")){
-                stmt.executeUpdate("insert into contaBancaria (conta_id, numero, saldo, senha, limiteespecial, tipo)\n" +
-                        "values ('" + max +"', '" + String.valueOf(random.nextInt(10000)) + "', '0', '" + senha + "', '100', '1')");
+                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, limiteespecial, tipo)\n" +
+                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '100', '1')");
+                stmt.executeUpdate(query);
             }
             else if (tipoConta.equals("2")){
-                stmt.executeUpdate("insert into contaBancaria (conta_id, numero, saldo, senha, tipo)\n" +
-                        "values ('" + max +"', '" + String.valueOf(random.nextInt(10000)) + "', '0', '" + senha + "', '2')");
+                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, tipo)\n" +
+                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '2')");
+                stmt.executeUpdate(query);
             }
-
-            //ResultSetMetaData resultSetMetaData = maxConta.getMetaData();
-            //System.out.println(resultSetMetaData.getColumnCount());
-
             maxConta.close();
             stmt.close();
             c.close();
+
+            return (max);
 
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
+        return ("-1");
     }
 }
