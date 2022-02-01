@@ -1,4 +1,5 @@
 package Contas;
 
-public class ContaPoupanca {
+public interface ContaPoupanca extends Transacoes {
+    void render(float taxa);
 }

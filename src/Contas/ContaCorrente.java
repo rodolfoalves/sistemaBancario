@@ -1,4 +1,5 @@
 package Contas;
 
-public class ContaCorrente {
+public interface ContaCorrente extends Transacoes {
+    public void tarifar(float tarifa);
 }

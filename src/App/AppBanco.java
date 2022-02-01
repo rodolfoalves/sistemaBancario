@@ -35,7 +35,6 @@ public class AppBanco {
     }
 
     public static void main(String[] args){
-
         Scanner scanner = new Scanner(System.in);
         int menu = -1;
 
