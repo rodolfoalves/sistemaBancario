@@ -1,22 +1,19 @@
 package App;
 
+import Pessoas.*;
 import java.sql.*;
 import java.sql.Statement;
 import java.util.Random;
 import java.util.Scanner;
 
 @SuppressWarnings("EnhancedSwitchMigration")
-public class AppGerente {
-
+public class AppGerente extends Cliente{
     public void iniciarAppGerente(){
-
         Scanner scanner = new Scanner(System.in);
         String login;
         String senha;
 
         System.out.println("Aplicativo Gerente Iniciado");
-
-
 
         int ok = 0;
 
@@ -30,7 +27,6 @@ public class AppGerente {
         }while (ok == 0);
 
         menuGerente(login, senha);
-
     }
 
     /**
@@ -127,6 +123,9 @@ public class AppGerente {
     public void adicionarCliente(){
         Scanner scanner = new Scanner(System.in);
 
+        Cliente cliente = new Cliente();
+
+        /**
         System.out.println("Nome do Cliente:");
         String nome = scanner.nextLine();
         System.out.println("CPF do CLiente:");
@@ -139,14 +138,28 @@ public class AppGerente {
         String senha = scanner.nextLine();
         System.out.println("1 para Conta Corrente - 2 para Conta Poupança");
         String tipoConta = scanner.nextLine();
+        **/
 
-        int valida = validaClienteExistente(cpf);
+        System.out.println("Nome do Cliente:");
+        cliente.setNome(scanner.nextLine());
+        System.out.println("CPF do CLiente:");
+        cliente.setCpf(scanner.nextLine());
+        System.out.println("Matricula do CLiente");
+        cliente.setMatricula(scanner.nextLine());
+        System.out.println("Login do CLiente");
+        cliente.setLogin(scanner.nextLine());
+        System.out.println("Senha do CLiente");
+        cliente.setSenha((scanner.nextLine()));
+        System.out.println("1 para Conta Corrente - 2 para Conta Poupança");
+        String tipoConta = scanner.nextLine();
+
+        int valida = validaClienteExistente(cliente.getCpf());
 
         if (valida == 1){
             System.out.println("Cliente ja cadastrado no sistema");
         }
         else {
-            cadastrarCliente(nome, cpf, matricula, login, senha, tipoConta);
+            cadastrarCliente(cliente, tipoConta);
         }
 
     }
@@ -183,9 +196,9 @@ public class AppGerente {
         }
         return 0;
     }
-    public void cadastrarCliente(String nome, String cpf, String matricula, String login, String senha, String tipoConta){
+    public void cadastrarCliente(Cliente cliente, String tipoConta){
 
-        String contaId = cadastrarConta(senha, tipoConta);
+        String contaId = cadastrarConta(cliente.getSenha(), tipoConta);
 
         if (Integer.parseInt(contaId) > 0){
             java.sql.Connection c = null;
@@ -199,8 +212,8 @@ public class AppGerente {
                 //c.setAutoCommit(false);
 
                 stmt = c.createStatement();
-                String query = ("insert into cliente \n" +
-                        "values ('" + nome +"', '" + cpf + "', '" + matricula + "', '" + login + "', '" + senha + "', '" + contaId + "')");
+                String query = ("insert into cliente \n" + "values ('" + cliente.getNome() +"', '" + cliente.getCpf() + "', '" +
+                        cliente.getMatricula() + "', '" + cliente.getLogin() + "', '" + cliente.getSenha() + "', '" + contaId + "')");
                 stmt.executeUpdate(query);
 
                 stmt.close();
