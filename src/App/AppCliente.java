@@ -1,6 +1,8 @@
 package App;
 
 import Pessoas.*;
+import Contas.*;
+
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -10,6 +12,9 @@ public class AppCliente extends Cliente{
 
     //variável chave/global de cliente
     public static Cliente cliente = new Cliente();
+
+    //variável chave/global da conta do cliente
+    public static ContaBancaria contaBancaria = new ContaBancaria();
 
     public void iniciarAppCliente(){
 
@@ -26,6 +31,7 @@ public class AppCliente extends Cliente{
 
             ok = validarCliente(cliente);
         }while (ok == 0);
+
 
         menuCliente();
     }
@@ -55,23 +61,24 @@ public class AppCliente extends Cliente{
 
                 if (cliente.getLogin().equals(login_teste) && cliente.getSenha().equals(senha_teste)){
 
-                    /**
-                     System.out.println(String.valueOf(rs.getString("nome")));
-                     System.out.println(String.valueOf(rs.getString("cpf")));
-                     System.out.println(String.valueOf(rs.getString("matricula")));
-                     System.out.println(String.valueOf(rs.getString("login")));
-                     System.out.println(String.valueOf(rs.getString("senha")));
-                     System.out.println(String.valueOf(rs.getString("conta_id")));
-                    **/
-
                     cliente.setNome(String.valueOf(rs.getString("nome")));
                     cliente.setCpf(String.valueOf(rs.getString("cpf")));
                     cliente.setMatricula(String.valueOf(rs.getString("matricula")));
                     cliente.setLogin(String.valueOf(rs.getString("login")));
                     cliente.setSenha(String.valueOf(rs.getString("senha")));
-                    cliente.setTipo(String.valueOf(rs.getString("conta_id")));
+                    cliente.setId_conta(String.valueOf(rs.getString("conta_id")));
 
-                    //System.out.println(cliente.getNome() + cliente.getCpf() + cliente.getMatricula() + cliente.getLogin() + cliente.getSenha() + cliente.getTipo());
+                    ResultSet cs = stmt.executeQuery( "select * from contabancaria where contabancaria.conta_id = '" + cliente.getId_conta() + "';" );
+
+                    while (cs.next()){
+                        contaBancaria.setId(String.valueOf(cs.getString("conta_id")));
+                        contaBancaria.setNumero(String.valueOf(cs.getString("numero")));
+                        contaBancaria.setSaldo(String.valueOf(cs.getString("saldo")));
+                        contaBancaria.setSenha(String.valueOf(cs.getString("senha")));
+                        contaBancaria.setTipo(String.valueOf(cs.getString("tipo")));
+                    }
+
+                    cliente.setConta(contaBancaria);
                     return 1;
                 }
             }
@@ -91,6 +98,62 @@ public class AppCliente extends Cliente{
     }
 
     public void menuCliente(){
+        Scanner scanner = new Scanner(System.in);
+        int menu;
+        System.out.println("Seja Bem Vindo SR(A) " + cliente.getNome());
 
+        do{
+            System.out.println("Informe o que desejas fazer");
+            System.out.println("1 para Sacar Valor");
+            System.out.println("2 para Depositar Valor");
+            System.out.println("3 para Transferir Valor");
+            System.out.println("4 para Verificar Saldo");
+            System.out.println("0 para sair do programa");
+            menu = scanner.nextInt();
+
+            switch (menu) {
+                case 1 -> {
+                    System.out.println("Informe o valor que desejas sacar da sua conta");
+                    float valorSaque = scanner.nextFloat();
+                    System.out.println("Informe a sua senha por favor");
+                    String senha = scanner.next();
+
+                    boolean autorizacao = cliente.getConta().sacar(cliente, valorSaque, senha);
+
+                    if (autorizacao) {
+                        cliente.getConta().setSaldo(String.valueOf(Float.parseFloat(cliente.getConta().getSaldo()) - valorSaque));
+                        cliente.getConta().atualizarSaldoBase(cliente);
+                    }
+                }
+                case 2 -> {
+                    System.out.println("Informe o valor que desejas depositar da sua conta");
+                    float valorSaque = scanner.nextFloat();
+                    System.out.println("Informe a sua senha por favor");
+                    String senha = scanner.next();
+
+                    boolean autorizacao = cliente.getConta().depositar(cliente, valorSaque, senha);
+
+                    if (autorizacao) {
+                        cliente.getConta().setSaldo(String.valueOf(Float.parseFloat(cliente.getConta().getSaldo()) + valorSaque));
+                        cliente.getConta().atualizarSaldoBase(cliente);
+                    }
+
+                }
+                case 3 -> {
+                    System.out.println("Informe o valor que desejas trasnferir");
+                    float valorSaque = scanner.nextFloat();
+                    System.out.println("Informe a conta para a qual deseja transferir");
+                    String contaTransferencia = scanner.next();
+                    System.out.println("Informe a sua senha por favor");
+                    String senha = scanner.next();
+
+                    boolean transferir = cliente.getConta().transferir(cliente, contaTransferencia, valorSaque, senha);
+                }
+                case 4 -> {
+                    cliente.getConta().apresentarSaldo(cliente);
+                }
+                case 0 -> menu = 0;
+            }
+        }while (menu != 0);
     }
 }
