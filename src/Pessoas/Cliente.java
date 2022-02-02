@@ -7,10 +7,9 @@ public class Cliente extends ContaBancaria implements Pessoa{
     private ContaBancaria conta;
     private String nome;
     private String cpf;
-
     private String matricula;
-
     private String login;
+    private String id_conta;
 
     public ContaBancaria getConta() {
         return conta;
@@ -49,5 +48,13 @@ public class Cliente extends ContaBancaria implements Pessoa{
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getId_conta() {
+        return id_conta;
+    }
+
+    public void setId_conta(String id_conta) {
+        this.id_conta = id_conta;
     }
 }

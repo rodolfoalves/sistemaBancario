@@ -204,7 +204,6 @@ public class AppGerente extends Cliente{
             java.sql.Connection c = null;
             Random random = new Random();
             Statement stmt = null;
-            String max = "";
 
             try {
                 Class.forName("org.postgresql.Driver");

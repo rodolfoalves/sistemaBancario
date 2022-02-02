@@ -1,9 +1,12 @@
 package Contas;
+import Pessoas.Cliente;
 
 public interface Transacoes {
-    boolean sacar(float valor, int senha);
+    boolean sacar(Cliente cliente, float valor, String senha);
 
-    void depositar (float valor);
+    boolean depositar (Cliente cliente, float valor, String senha);
 
-    boolean transferir (ContaBancaria contaBancaria, float valor, int senha);
+    boolean transferir (Cliente cliente, String contaBancaria, float valor, String senha);
+
+    void apresentarSaldo(Cliente cliente);
 }
