@@ -22,4 +22,4 @@ A aplicação **Gerente** permite:
 
 ## Diagrama de Classes
 
-![Diagrama de Classes](diagrama de Classes.jpg)
+![diagrama de Classes](https://user-images.githubusercontent.com/24525437/152204171-655a2d79-fff2-48b9-960d-64517f724939.jpg)
