@@ -14,7 +14,6 @@ public class Cliente extends ContaBancaria implements Pessoa{
     public ContaBancaria getConta() {
         return conta;
     }
-
     public void setConta(ContaBancaria conta) {
         this.conta = conta;
     }
@@ -22,7 +21,6 @@ public class Cliente extends ContaBancaria implements Pessoa{
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -30,7 +28,6 @@ public class Cliente extends ContaBancaria implements Pessoa{
     public String getCpf() {
         return cpf;
     }
-
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
@@ -45,16 +42,10 @@ public class Cliente extends ContaBancaria implements Pessoa{
     public String getLogin() {
         return login;
     }
-
     public void setLogin(String login) {
         this.login = login;
     }
 
-    public String getId_conta() {
-        return id_conta;
-    }
-
-    public void setId_conta(String id_conta) {
-        this.id_conta = id_conta;
-    }
+    public String getId_conta() {return id_conta;}
+    public void setId_conta(String id_conta) {this.id_conta = id_conta;}
 }

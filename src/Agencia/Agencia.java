@@ -1,4 +1,7 @@
 package Agencia;
 
-public class Agencia {
+public interface Agencia {
+    void calcularReceitaAgencia();
+    void calcularReceitaContaCorrente();
+    void calcularReceitaContaPoupanca();
 }

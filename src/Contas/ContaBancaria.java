@@ -14,6 +14,7 @@ public class ContaBancaria implements ContaCorrente, ContaPoupanca{
     private String saldo;
     private String senha;
     private String tipo;
+    private String agencia;
 
     public String getNumero() {
         return numero;
@@ -48,6 +49,10 @@ public class ContaBancaria implements ContaCorrente, ContaPoupanca{
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getAgencia() {return agencia;}
+
+    public void setAgencia(String agencia) {this.agencia = agencia;}
 
     @Override
     public void tarifar(float tarifa) {

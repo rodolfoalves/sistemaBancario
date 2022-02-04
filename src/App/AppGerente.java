@@ -1,5 +1,6 @@
 package App;
 
+import Agencia.Agencia;
 import Pessoas.*;
 import java.sql.*;
 import java.sql.Statement;
@@ -7,7 +8,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 @SuppressWarnings("EnhancedSwitchMigration")
-public class AppGerente extends Cliente{
+
+public class AppGerente extends Gerente implements Agencia {
+
+    public static Gerente gerente = new Gerente();
+
     public void iniciarAppGerente(){
         Scanner scanner = new Scanner(System.in);
         String login;
@@ -26,7 +31,7 @@ public class AppGerente extends Cliente{
             ok = validarGerente(login, senha);
         }while (ok == 0);
 
-        menuGerente(login, senha);
+        menuGerente();
     }
 
     /**
@@ -66,13 +71,31 @@ public class AppGerente extends Cliente{
 
             stmt = c.createStatement();
 
-            ResultSet rs = stmt.executeQuery( "select login,senha from gerente where gerente.login = '" + login + "';" );
+            ResultSet rs = stmt.executeQuery( "select * from gerente where gerente.login = '" + login + "';" );
 
             while (rs.next()){
                 login_teste = String.valueOf(rs.getString("login"));
                 senha_teste = String.valueOf(rs.getString("senha"));
 
                 if (login.equals(login_teste) && senha.equals(senha_teste)){
+
+                    gerente.setNome(String.valueOf(rs.getString("nome")));
+                    gerente.setCpf(String.valueOf(rs.getString("cpf")));
+                    gerente.setMatricula(String.valueOf(rs.getString("matricula")));
+                    gerente.setLogin(String.valueOf(rs.getString("login")));
+                    gerente.setSenha(String.valueOf(rs.getString("senha")));
+                    gerente.setId_agencia(String.valueOf(rs.getString("id_agencia")));
+
+                    /**
+                    System.out.println(gerente.getNome());
+                    System.out.println(gerente.getCpf());
+                    System.out.println(gerente.getMatricula());
+                    System.out.println(gerente.getLogin());
+                    System.out.println(gerente.getSenha());
+                    System.out.println(gerente.getId_agencia());
+                    **/
+
+
                     return 1;
                 }
             }
@@ -91,11 +114,11 @@ public class AppGerente extends Cliente{
         return 0;
     }
 
-    public void menuGerente(String login, String senha){
+    public void menuGerente(){
 
         Scanner scanner = new Scanner(System.in);
         int menu;
-        System.out.println("Seja Bem Vindo SR(A) " + login);
+        System.out.println("Seja Bem Vindo SR(A) " + gerente.getNome());
 
         do{
             System.out.println("Informe o que desejas fazer");
@@ -103,6 +126,7 @@ public class AppGerente extends Cliente{
             System.out.println("2 para Atualiza Contas");
             System.out.println("3 para Calcular Receita da Conta Corrente");
             System.out.println("4 para Calcular Receita da Poupança");
+            System.out.println("5 para Calcular Receita da Agencia");
             System.out.println("0 para sair do programa");
             menu = Integer.parseInt(scanner.nextLine());
 
@@ -111,7 +135,16 @@ public class AppGerente extends Cliente{
                     adicionarCliente();
                     break;
                 case 2:
-                    System.out.println('2');
+                    System.out.println("salves");
+                    break;
+                case 3:
+                    calcularReceitaContaCorrente();
+                    break;
+                case 4:
+                    calcularReceitaContaPoupanca();
+                    break;
+                case 5:
+                    calcularReceitaAgencia();
                     break;
                 case 0:
                     menu = 0;
@@ -246,13 +279,13 @@ public class AppGerente extends Cliente{
             }
 
             if (tipoConta.equals("1")){
-                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, limiteespecial, tipo)\n" +
-                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '100', '1')");
+                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, limiteespecial, tipo, id_agencia)\n" +
+                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '100', '1', '1')");
                 stmt.executeUpdate(query);
             }
             else if (tipoConta.equals("2")){
-                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, tipo)\n" +
-                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '2')");
+                String query = ("insert into contaBancaria (conta_id, numero, saldo, senha, tipo, id_agencia)\n" +
+                        "values ('" + max +"', '" + String.valueOf(random.nextInt(100000)) + "', '0', '" + senha + "', '2', '1')");
                 stmt.executeUpdate(query);
             }
             maxConta.close();
@@ -267,4 +300,96 @@ public class AppGerente extends Cliente{
         }
         return ("-1");
     }
+
+    @Override
+    public void calcularReceitaAgencia() {
+        java.sql.Connection c = null;
+        Statement stmt = null;
+        String total = "";
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select sum(saldo) from contabancaria where id_agencia = '" + gerente.getId_agencia() + "'");
+
+            while (rs.next()){
+                total = String.valueOf(rs.getString("sum"));
+                System.out.println("Receita das contas da Agência  = " + total);
+            }
+
+            rs.close();
+            stmt.close();
+            c.close();
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void calcularReceitaContaCorrente() {
+        java.sql.Connection c = null;
+        Statement stmt = null;
+        String total = "";
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select sum(saldo) from contabancaria where contabancaria.tipo = '1' and id_agencia = '" + gerente.getId_agencia() + "'");
+
+            while (rs.next()){
+                total = String.valueOf(rs.getString("sum"));
+                System.out.println("Receita das contas do tipo CONTA CORRENTE = " + total);
+            }
+
+            rs.close();
+            stmt.close();
+            c.close();
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void calcularReceitaContaPoupanca() {
+        java.sql.Connection c = null;
+        Statement stmt = null;
+        String total = "";
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "arquivo41");
+            c.setAutoCommit(false);
+
+            stmt = c.createStatement();
+
+            ResultSet rs = stmt.executeQuery("select sum(saldo) from contabancaria where contabancaria.tipo = '2' and id_agencia = '" + gerente.getId_agencia() + "'");
+
+            while (rs.next()){
+                total = String.valueOf(rs.getString("sum"));
+                System.out.println("Receita das contas do tipo CONTA POUPANCA = " + total);
+            }
+
+            rs.close();
+            stmt.close();
+            c.close();
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+
 }

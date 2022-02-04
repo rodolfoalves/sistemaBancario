@@ -6,33 +6,8 @@ import java.util.Scanner;
 @SuppressWarnings("EnhancedSwitchMigration")
 public class AppBanco {
 
-    private static Agencia banco = new Agencia();
-    private static AppCliente appCliente = new AppCliente();
-    private static AppGerente appGerente = new AppGerente();
-
-    public Agencia getBanco() {
-        return banco;
-    }
-
-    public void setBanco(Agencia banco) {
-        this.banco = banco;
-    }
-
-    public AppCliente getAppCliente() {
-        return appCliente;
-    }
-
-    public void setAppCliente(AppCliente appCLiente) {
-        this.appCliente = appCLiente;
-    }
-
-    public AppGerente getAppGerente() {
-        return appGerente;
-    }
-
-    public void setAppGerente(AppGerente appGerente) {
-        this.appGerente = appGerente;
-    }
+    private static final AppCliente appCliente = new AppCliente();
+    private static final AppGerente appGerente = new AppGerente();
 
     public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
